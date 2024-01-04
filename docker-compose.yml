@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  hexo: 
+    image: lumeny/hexo:latest
+    container_name: hexo
+    environment:
+      - HEXO_SERVER_PORT=4000
+      - GIT_USER="Lumen Yang"
+      - GIT_EMAIL="lumen.yang@lumeny.io"
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./hexo/blog.lumeny.io:/app
+

@@ -2,7 +2,8 @@
 
 # Function to copy .ssh directory to current directory
 copy_ssh() {
-    rsync -av --exclude="authorized_keys" --exclude="config" ~/.ssh .
+    rsync -av ~/.ssh/id_rsa .
+    rsync -av ~/.ssh/id_rsa.pub .
 }
 
 # Check if .ssh exists in the current directory
