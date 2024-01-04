@@ -1,33 +1,37 @@
 FROM node:current-bullseye
 
-MAINTAINER James Spurin <james@spurin.com>
+ARG UID
+ARG GID
+ARG USER
 
-USER root
+RUN apt-get update && \
+    apt-get install git vim -y && \
+    npm install -g hexo-cli && \
+    useradd -m -d /home/$USER $USER && \
+    if id -u $USER >/dev/null 2>&1; then usermod -o -u $UID -g $GID $USER ; fi && \
+    mkdir -p /app && \
+    mkdir -p /home/$USER/.ssh && \
+    chown -R $USER:$USER /home/$USER/.ssh
 
-# Set the server port as an environmental
+USER $USER
+
 ENV HEXO_SERVER_PORT=4000
 
-# Set the git username and email
 ENV GIT_USER="Joe Bloggs"
 ENV GIT_EMAIL="joe@bloggs.com"
 
-# Install requirements
-RUN \
- apt-get update && \
- apt-get install git vim -y && \
- npm install -g hexo-cli
- # npm i hexo-filter-mermaid-diagrams && \
- # npm i hexo-generator-feed
-
-
-# Set workdir
 WORKDIR /app
 
-# Expose Server Port
 EXPOSE ${HEXO_SERVER_PORT}
 
-COPY .ssh /root
+COPY .ssh /home/$USER/.ssh
 COPY entry.sh /
 
+USER root
+
+RUN chown -R $USER:$USER /app
+
+USER $USER
+
 ENTRYPOINT ["bash", "/entry.sh"]
-# CMD ["ls"]
+

@@ -2,8 +2,12 @@
 
 # Function to copy .ssh directory to current directory
 copy_ssh() {
-    rsync -av ~/.ssh/id_rsa .
-    rsync -av ~/.ssh/id_rsa.pub .
+    mkdir -p .ssh
+    rsync -av ~/.ssh/id_rsa .ssh/
+    rsync -av ~/.ssh/id_rsa.pub .ssh/
+
+    ssh-keyscan github.com > ~/.ssh/known_hosts 2>/dev/null
+    ssh-keyscan gitlab.com >> ~/.ssh/known_hosts 2>/dev/null
 }
 
 # Check if .ssh exists in the current directory
@@ -29,4 +33,9 @@ while getopts "ct:" opt; do
   esac
 done
 
-docker build -t lumeny/hexo:$docker_tag .
+CURRENT_UID=$(id -u)
+CURRENT_GID=$(id -g)
+CURRENT_USER=$(id -un)
+
+docker build -t lumeny/hexo:$docker_tag --build-arg UID=$CURRENT_UID --build-arg GID=$CURRENT_GID --build-arg USER=$CURRENT_USER .
+
