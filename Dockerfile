@@ -1,4 +1,4 @@
-FROM node:20-bullseye
+FROM node:current-bullseye
 
 MAINTAINER James Spurin <james@spurin.com>
 
@@ -15,9 +15,9 @@ ENV GIT_EMAIL="joe@bloggs.com"
 RUN \
  apt-get update && \
  apt-get install git vim -y && \
- npm install -g hexo-cli && \
- npm i hexo-filter-mermaid-diagrams && \
- npm i hexo-generator-feed
+ npm install -g hexo-cli
+ # npm i hexo-filter-mermaid-diagrams && \
+ # npm i hexo-generator-feed
 
 
 # Set workdir
@@ -29,5 +29,5 @@ EXPOSE ${HEXO_SERVER_PORT}
 COPY .ssh /root
 COPY entry.sh /
 
-CMD ["bash", "/entry.sh"]
+ENTRYPOINT ["bash", "/entry.sh"]
 # CMD ["ls"]
