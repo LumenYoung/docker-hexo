@@ -8,6 +8,8 @@ git pull
 git submodule update --recursive --remote
 
 echo "***** Starting server on port ${HEXO_SERVER_PORT} *****"
+npm install
+
 hexo clean
 
 hexo server -d -p ${HEXO_SERVER_PORT}
