@@ -1,28 +1,13 @@
 #!/bin/bash
 
 # Function to copy .ssh directory to current directory
-copy_ssh() {
-    rsync -av ~/.ssh/id_rsa .
-    rsync -av ~/.ssh/id_rsa.pub .
-
-    ssh-keyscan github.com > ~/.ssh/known_hosts 2>/dev/null 
-    ssh-keyscan gitlab.com >> ~/.ssh/known_hosts 2>/dev/null 
-}
-
-# Check if .ssh exists in the current directory
-if [ ! -d "./.ssh" ]; then
-    copy_ssh
-fi
 
 # Default docker tag
 docker_tag="latest"
 
 # Parse command line options
-while getopts "ct:" opt; do
+while getopts "t:" opt; do
   case ${opt} in
-    c )
-      copy_ssh
-      ;;
     t )
       docker_tag=$OPTARG
       ;;
@@ -32,4 +17,5 @@ while getopts "ct:" opt; do
   esac
 done
 
-docker build -t lumeny/hexo:$docker_tag .
+# Append all remaining command line parameters to docker build command
+docker build  --build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_rsa.pub)" -t lumeny/hexo:$docker_tag .
