@@ -14,16 +14,16 @@ else \
   echo "***** App directory contains a requirements.txt file, installing npm requirements *****"; \
   cat /app/requirements.txt | xargs npm --prefer-offline install --save; \
 fi; \
-if [ "$(ls -A /app/.ssh 2>/dev/null)" ]; then \
-  echo "***** App .ssh directory exists and has content, continuing *****"; \
-else \
-  echo "***** App .ssh directory is empty, initialising ssh key and configuring known_hosts for common git repositories (github/gitlab) *****" && \
-  rm -rf ~/.ssh/* && \
-  ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -P "" && \
-  ssh-keyscan github.com > ~/.ssh/known_hosts 2>/dev/null && \
-  ssh-keyscan gitlab.com >> ~/.ssh/known_hosts 2>/dev/null && \
-  cp -r ~/.ssh /app; \
-fi; \
+# if [ "$(ls -A /app/.ssh 2>/dev/null)" ]; then \
+#   echo "***** App .ssh directory exists and has content, continuing *****"; \
+# else \
+#   echo "***** App .ssh directory is empty, initialising ssh key and configuring known_hosts for common git repositories (github/gitlab) *****" && \
+#   rm -rf ~/.ssh/* && \
+#   ssh-keygen -t rsa -f ~/.ssh/id_rsa -q -P "" && \
+#   ssh-keyscan github.com > ~/.ssh/known_hosts 2>/dev/null && \
+#   ssh-keyscan gitlab.com >> ~/.ssh/known_hosts 2>/dev/null && \
+#   cp -r ~/.ssh /app; \
+# fi; \
 
 echo "***** Running git config, user = ${GIT_USER}, email = ${GIT_EMAIL} *****" && \
 git config --global user.email ${GIT_EMAIL} && \
@@ -40,4 +40,5 @@ cat ~/.ssh/id_rsa.pub && \
 
 echo "***** Starting server on port ${HEXO_SERVER_PORT} *****" && \
 hexo clean
+
 hexo server -d -p ${HEXO_SERVER_PORT}

@@ -4,6 +4,9 @@
 copy_ssh() {
     rsync -av ~/.ssh/id_rsa .
     rsync -av ~/.ssh/id_rsa.pub .
+
+    ssh-keyscan github.com > ~/.ssh/known_hosts 2>/dev/null 
+    ssh-keyscan gitlab.com >> ~/.ssh/known_hosts 2>/dev/null 
 }
 
 # Check if .ssh exists in the current directory
