@@ -1,7 +1,5 @@
 FROM node:current-bullseye
 
-MAINTAINER James Spurin <james@spurin.com>
-
 USER root
 
 # Set the server port as an environmental
@@ -22,6 +20,9 @@ RUN \
 
 # Set workdir
 WORKDIR /app
+
+RUN git clone git@github.com:LumenYoung/hexo-site.git . && \
+  git git submodule update --init --recursive
 
 # Expose Server Port
 EXPOSE ${HEXO_SERVER_PORT}

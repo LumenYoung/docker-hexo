@@ -9,6 +9,3 @@ services:
       - GIT_EMAIL="lumen.yang@lumeny.io"
     ports:
       - "4000:4000"
-    volumes:
-      - ./hexo/blog.lumeny.io:/app
-
