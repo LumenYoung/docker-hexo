@@ -7,13 +7,14 @@ ARG USER
 RUN apt-get update && \
     apt-get install git vim -y && \
     npm install -g hexo-cli && \
-    useradd -m -d /home/$USER $USER && \
-    if id -u $USER >/dev/null 2>&1; then usermod -o -u $UID -g $GID $USER ; fi && \
+    if getent passwd $UID > /dev/null; then USER_NAME=$(getent passwd $UID | cut -d: -f1); else useradd -m -d /home/$USER -u $UID $USER && USER_NAME=$USER; fi && \
+    if getent group $GID > /dev/null; then GROUP_NAME=$(getent group $GID | cut -d: -f1); else groupadd -g $GID $USER && GROUP_NAME=$USER; fi && \
+    usermod -g $GROUP_NAME $USER_NAME && \
     mkdir -p /app && \
-    mkdir -p /home/$USER/.ssh && \
-    chown -R $USER:$USER /home/$USER/.ssh
+    mkdir -p /home/$USER_NAME/.ssh && \
+    chown -R $USER_NAME:$GROUP_NAME /home/$USER_NAME/.ssh
 
-USER $USER
+USER $USER_NAME
 
 ENV HEXO_SERVER_PORT=4000
 
@@ -24,14 +25,14 @@ WORKDIR /app
 
 EXPOSE ${HEXO_SERVER_PORT}
 
-COPY .ssh /home/$USER/.ssh
+COPY .ssh /home/$USER_NAME/.ssh
 COPY entry.sh /
 
 USER root
 
-RUN chown -R $USER:$USER /app
+RUN chown -R $USER_NAME:$GROUP_NAME /app
 
-USER $USER
+USER $USER_NAME
 
 ENTRYPOINT ["bash", "/entry.sh"]
 
